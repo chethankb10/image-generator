@@ -1,0 +1,4 @@
+flask
+huggingface-hub
+python-dotenv
+pillow
