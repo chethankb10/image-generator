@@ -10,10 +10,14 @@ load_dotenv()
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-client = InferenceClient(
-    provider="auto",
-    api_key=os.environ["HF_TOKEN"],
-)
+HF_TOKEN = os.environ.get('HF_TOKEN')
+client = None
+
+if HF_TOKEN:
+    client = InferenceClient(
+        provider="auto",
+        api_key=HF_TOKEN,
+    )
 
 @app.route('/')
 def index():
@@ -28,6 +32,9 @@ def generate_image():
         if not prompt or len(prompt.strip()) == 0:
             return jsonify({'error': 'Prompt cannot be empty'}), 400
         
+        if client is None:
+            return jsonify({'error': 'HF_TOKEN is not configured. Set HF_TOKEN in Vercel Environment Variables.'}), 500
+
         # Generate image
         image = client.text_to_image(
             prompt,
