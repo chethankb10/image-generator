@@ -38,11 +38,7 @@ def generate_image():
         img_buffer = BytesIO()
         image.save(img_buffer, format='PNG')
         img_buffer.seek(0)
-        
-        # Also save locally with unique name
-        filename = f"generated_{uuid.uuid4().hex}.png"
-        image.save(filename)
-        
+
         return send_file(
             img_buffer,
             mimetype='image/png',
